@@ -14,6 +14,7 @@ import { match } from 'universal-router';
 import routes from './routes';
 import history from './core/history';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
+import configureStore from './store/configureStore';
 
 const context = {
   insertCss: styles => styles._insertCss(), // eslint-disable-line no-underscore-dangle
@@ -75,6 +76,12 @@ function render(container, state, component) {
 }
 
 function run() {
+  const platform = 'desktop';
+  const store = configureStore({
+    env: {
+      platform,
+    },
+  });
   let currentLocation = null;
   const container = document.getElementById('app');
 
@@ -90,6 +97,7 @@ function run() {
       state: location.state,
       context,
       render: render.bind(undefined, container, location.state),
+      store,
     }).catch(err => console.error(err)); // eslint-disable-line no-console
   });
 

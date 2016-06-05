@@ -25,6 +25,8 @@ import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics } from './config';
 
+import configureStore from './store/configureStore';
+
 const app = express();
 
 //
@@ -82,6 +84,13 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
+    const platform = 'desktop';
+    const store = configureStore({
+      env: {
+        platform,
+      },
+    });
+
     let css = [];
     let statusCode = 200;
     const template = require('./views/index.jade'); // eslint-disable-line global-require
@@ -106,6 +115,7 @@ app.get('*', async (req, res, next) => {
         data.css = css.join('');
         return true;
       },
+      store,
     });
 
     res.status(statusCode);

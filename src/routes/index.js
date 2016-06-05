@@ -9,6 +9,7 @@
 
 import React from 'react';
 import App from '../components/App';
+import { Provider } from 'react-redux';
 
 // Child routes
 import home from './home';
@@ -17,6 +18,9 @@ import login from './login';
 import register from './register';
 import content from './content';
 import error from './error';
+
+// DevTools
+import DevToolsPanel from '../containers/DevToolsPanel';
 
 export default {
 
@@ -31,11 +35,16 @@ export default {
     error,
   ],
 
-  async action({ next, render, context }) {
+  async action({ next, render, context, store }) {
     const component = await next();
     if (component === undefined) return component;
     return render(
-      <App context={context}>{component}</App>
+      <div>
+        <Provider store={store}>
+          <App context={context}>{component}</App>
+        </Provider>
+        <DevToolsPanel store={store} />
+      </div>
     );
   },
 
